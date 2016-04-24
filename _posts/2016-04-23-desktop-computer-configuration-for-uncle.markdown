@@ -4,8 +4,8 @@ title:  "给大舅的电脑配置"
 subtitle:   ""  
 date:       2016-04-24
 author:     "allanruin"
-header-img: "img/posthead/post-bg-js-module.jpg"
-<!-- header-mask: 0.5 -->
+header-img: "img/posthead/6f3eb8014a90f6037ec5a5fb3e12b31bb151ed55.jpg"
+header-mask: 0.4
 catalog: true
 tags:
     - 装机
@@ -76,19 +76,6 @@ SSD这部分我比较犹豫的是，闪迪extreme plus的240g，性价比其实�
 |合计																							| 4902 		|
 
 
-# 经济配置
-
-| 配件          																				|价格       |
-| --------------------------------------------------------------------------------------------- |:---------:|
-| [i5-6500天猫](https://detail.tmall.com/item.htm?id=521288380727)       						| 1359  	|
-| [威刚8G DDR4](https://detail.tmall.com/item.htm?id=522570984763) 								| 189	    |
-| [sandisk plus](http://item.jd.com/1398969.html)			 									| 379     	|
-|[安钛克（Antec）额定500W ](http://item.jd.com/840370.html)										| 299		|
-|[金河田（Golden field）预见A2B 中塔机箱 ](http://item.jd.com/1666223.html)						| 99		|
-|[华硕（ASUS）B150M-PLUS ](http://item.jd.com/2132478.html)										| 719		|
-|[九州风神（DEEPCOOL)冰凌 MINI 旗舰双刃版](http://item.jd.com/1122682.html)						| 46		|
-|无需独立显卡																					| 0 		|
-|合计																							| 3090 		|
 
 # 推荐配置
 
