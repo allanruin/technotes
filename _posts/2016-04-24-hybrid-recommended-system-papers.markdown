@@ -28,6 +28,12 @@ tags:
 4. user-class similarity [49],
 5. iterative message passing procedure
 
+### PIP
+
+$$PIP(r_1,r_2) = Proximity(r_1,r_2) · Impact(r_1,r_2) · Popularity(r_1,r_2)$$
+![](/img/in-post/QQ截图20160427113047.png)
+PIP考虑了三个因素，`Proximit`表征了两个用户观点是否一致（都是正面还是都是反面或者以一个正面评价，另一个用户负面评价）。对于评价情感不一致的给与较大的罚项。`Impact`：可以理解为冲击，如果用户给出的分数非常极端，如满分，则我们可以认为这个评分强烈的表达了用户偏好。
+`Popularity`：如果用户的评分跟大众评分较接近，则其实这个评分的信息量比较小。
 
 `iterative-clustered collaborative filtering` (ICCF), spectral clustering is iteratively utilized in both user-based and item-based collaborative filtering to predict the unknown ratings. 然而这种方法对所有用户和物品都有着相同的权值。
 
