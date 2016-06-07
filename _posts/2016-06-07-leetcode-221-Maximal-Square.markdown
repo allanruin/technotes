@@ -95,7 +95,7 @@ int maximalSquare(vector<vector<char>>& matrix) {
     vector<vector<int>> c(m, vector<int>(n, 0));
     for (int i = 0;i < m;i++) {
         for (int j = 0;j < n;j++) {
-            if (matrix[i][j] == 1) { c[i][j] = 1; }
+            if (matrix[i][j] == '1') { c[i][j] = 1; }
         }
     }
 
@@ -129,24 +129,59 @@ int maximalSquare(vector<vector<char>>& matrix) {
 ```cpp
 class Solution {
 public:
-int maximalSquare(vector<vector<char>>& matrix) {
-    int m = matrix.size();
-    if(m==0) return 0;
-    int n = matrix[0].size();
+    int maximalSquare(vector<vector<char>>& matrix) {
+        int m = matrix.size();
+        if(m==0) return 0;
+        int n = matrix[0].size();
+    
+        vector<vector<int>> dp(m+1, vector<int>(n+1, 0));
+    
+        int ret = 0;
+        for(int i = 1; i <= m; i ++){
+            for(int j = 1; j <= n; j ++){
+                if(matrix[i-1][j-1] == '0'){
+                    dp[i][j] = 0;
+                }else{
+                    dp[i][j] = 1 + min(dp[i-1][j], min(dp[i][j-1], dp[i-1][j-1]));
+                }
+                ret = max(ret, dp[i][j]);
+            }
+        }
+        return ret*ret;
+    }
+};
+```
+上面这个代码怎么处理全0的情况呢。。注意到它的缓存数组是(m+1,n+1)大小的。这样直接从i=1,j=1开始遍历，就不用去判断是不是边界，无需对边界再做特殊处理了。那个`matrix[i-1][j-1]`取的并不是前上方，只是为了对应回matrix的点，因为dp的点偏移了(1,1)。
 
-    vector<vector<int>> dp(m+1, vector<int>(n+1, 0));
 
-    int ret = 0;
-    for(int i = 1; i <= m; i ++){
-        for(int j = 1; j <= n; j ++){
-            if(matrix[i-1][j-1] == '0'){
+讲道理，这个java的代码也挺简洁的。
+```java
+public int maximalSquare(char[][] matrix) {
+    int m = matrix.length;
+    if(m <= 0)return 0;
+    int n = matrix[0].length;
+    int[][] dp = new int[m][n];
+    for(int i = 0; i < m; ++i)
+        dp[i][0] = matrix[i][0] - '0';
+    for(int j = 0; j < n; ++j)
+        dp[0][j] = matrix[0][j] - '0';
+    for(int i = 1; i < m; ++i)
+        for(int j = 1; j < n; ++j){
+            if(matrix[i][j] == '0'){
                 dp[i][j] = 0;
             }else{
-                dp[i][j] = 1 + min(dp[i-1][j], min(dp[i][j-1], dp[i-1][j-1]));
+                int L1 = dp[i][j - 1];
+                int L2 = dp[i - 1][j];
+                if(L1 != L2)
+                    dp[i][j] = Math.min(L1, L2) + 1;
+                else
+                    dp[i][j] = (matrix[i-L1][j-L1] == '1') ? L1 + 1 : L1;            
             }
-            ret = max(ret, dp[i][j]);
         }
-    }
-    return ret*ret;
+    int max = 0;
+    for(int[] row : dp)
+        for(int col : row)
+            max = Math.max(max, col);
+    return max * max;
 }
 ```
