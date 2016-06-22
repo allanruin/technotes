@@ -1,0 +1,19 @@
+---
+layout: post
+title:  "尝试滴滴数据"
+subtitle:   ""  
+date:       2016-06-22
+author:     "allanruin"
+header-img: "img/posthead/post-bg-js-module.jpg"
+<!-- header-mask: 0.5 -->
+catalog: false
+tags:
+    - 滴滴
+    - 大数据
+---
+
+# 直观印象
+
+![](/img/in-post/didi-01.png)
+
+页面绘制的是下拉框所选中的区域，在21天里的全部GAP折线图。课在博客的这个页面看到[didi-data](/didi-data/)
