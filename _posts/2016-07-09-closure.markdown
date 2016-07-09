@@ -1,0 +1,227 @@
+---
+layout: post
+title:  "python和JavaScript闭包"
+subtitle:   ""  
+date:       2016-07-09
+author:     "allanruin"
+header-img: "img/posthead/stock-photo-132074169.jpg"
+<!-- header-mask: 0.5 -->
+catalog: false
+tags:
+    - sublime
+    - python
+---
+
+# 涉及闭包的代码
+
+
+``` python
+def make_actions():
+    acts = []
+    for i in range(5):
+        acts.append(lambda x: i ** x)
+    return acts
+
+foo = make_actions()
+print(foo[0](2))
+print(foo[1](2))
+print(foo[3](2))
+print(foo[3](2))
+
+# 16
+# 16
+# 16
+# 16
+```
+
+其输出结果是4个16，而不是有些人期待的0,1,4,9。这其实涉及到怎么理解闭包了。一般而言，我们可能会听到说闭包就是函数内能访问环境外层的环境变量，以为这是讲外层环境变量打包（拷贝）到函数内。但从这里我们可以看出其实闭包内部得到的是外层环境变量的引用。这里for循环变量i的还有个变量暴露的问题，所以在闭包的外层，函数`make_actions`中的变量只有一个i变量。而闭包中得到的是这个变量的引用。这个变量在循环完毕后，值是4，所以我们得到的是4的平方16.
+
+然后我想起好像左耳朵耗子有个文章是讲JavaScript闭包的，找了下，那篇文章非常通俗易懂。
+
+>闭包就是函数的局部变量集合，只是这些局部变量在函数返回后会继续存在。     
+>闭包就是就是函数的“堆栈”在函数返回后并不释放，我们也可以理解为这些函数堆栈并不在栈上分配而是在堆上分配    
+>当在一个函数内定义另外一个函数就会产生闭包。    
+
+上面代码的等价的JavaScript代码是
+
+``` javascript
+var arr = [];
+for(var i=0;i<5;i++){
+	arr.push(function(x){return i*x;});
+}
+
+console.log(arr[0](2));
+console.log(arr[1](2));
+console.log(arr[2](2));
+console.log(arr[3](2));
+// output 10,10,10,10
+```
+
+理解为堆栈上的变量不释放，闭包内得到引用就解释的通了。
+
+# JavaScript的闭包
+
+这部分内容来自左耳朵耗子的[文章](http://coolshell.cn/articles/6731.html)：
+在ECMAscript的脚本的函数运行时，每个函数关联都有一个执行上下文场景(Execution Context) ，这个执行上下文场景中包含三个部分
+
+文法环境（The LexicalEnvironment）
+变量环境（The VariableEnvironment）
+this绑定
+其中第三点this绑定与闭包无关，不在本文中讨论。文法环境中用于解析函数执行过程使用到的变量标识符。我们可以将文法环境想象成一个对象，该对象包含了两个重要组件，环境记录(Enviroment Recode)，和外部引用(指针)。环境记录包含包含了函数内部声明的局部变量和参数变量，外部引用指向了外部函数对象的上下文执行场景。全局的上下文场景中此引用值为NULL。这样的数据结构就构成了一个单向的链表，每个引用都指向外层的上下文场景。
+![](/img/in-post/closure-zuoerduohaozi.png)
+
+例子1:闭包中局部变量是引用而非拷贝
+
+
+``` javascript
+function say667() {
+    // Local variable that ends up within closure
+    var num = 666;
+    var sayAlert = function() { console.log(num); }
+    num++;
+    return sayAlert;
+}
+ 
+var sayAlert = say667();
+sayAlert()
+```
+因此执行结果应该弹出的667而非666。
+
+例子2：多个函数绑定同一个闭包，因为他们定义在同一个函数内。
+
+``` javascript
+function setupSomeGlobals() {
+    // Local variable that ends up within closure
+    var num = 666;
+    // Store some references to functions as global variables
+    gAlertNumber = function() { console.log(num); }
+    gIncreaseNumber = function() { num++; }
+    gSetNumber = function(x) { num = x; }
+}
+setupSomeGlobals(); // 为三个全局变量赋值
+gAlertNumber(); //666
+gIncreaseNumber();
+gAlertNumber(); // 667
+gSetNumber(12);//
+gAlertNumber();//12
+```
+
+例子3：当在一个循环中赋值函数时，这些函数将绑定同样的闭包
+
+
+``` javascript
+function buildList(list) {
+    var result = [];
+    for (var i = 0; i < list.length; i++) {
+        var item = 'item' + list[i];
+        result.push( function() {console.log(item + ' ' + list[i])} );
+    }
+    return result;
+}
+ 
+function testList() {
+    var fnlist = buildList([1,2,3]);
+    // using j only to help prevent confusion - could use i
+    for (var j = 0; j < fnlist.length; j++) {
+        fnlist[j]();
+    }
+}
+```
+testList的执行结果是弹出item3 undefined窗口三次，因为这三个函数绑定了同一个闭包，而且item的值为最后计算的结果，但是当i跳出循环时i值为4，所以list[4]的结果为undefined.
+
+例子4：外部函数所有局部变量都在闭包内，即使这个变量声明在内部函数定义之后。
+
+
+``` javascript
+function sayAlice() {
+    var sayAlert = function() { console.log(alice); }
+    // Local variable that ends up within closure
+    var alice = 'Hello Alice';
+    return sayAlert;
+}
+var helloAlice=sayAlice();
+helloAlice();
+```
+执行结果是弹出”Hello Alice”的窗口。即使局部变量声明在函数sayAlert之后，局部变量仍然可以被访问到。
+
+例子5：每次函数调用的时候创建一个新的闭包
+
+``` javascript
+function newClosure(someNum, someRef) {
+    // Local variables that end up within closure
+    var num = someNum;
+    var anArray = [1,2,3];
+    var ref = someRef;
+    return function(x) {
+        num += x;
+        anArray.push(num);
+        console.log('num: ' + num +
+        '\nanArray ' + anArray.toString() +
+        '\nref.someVar ' + ref.someVar);
+    }
+}
+closure1=newClosure(40,{someVar:'closure 1'});
+closure2=newClosure(1000,{someVar:'closure 2'});
+ 
+closure1(5); // num:45 anArray[1,2,3,45] ref:'someVar closure1'
+closure2(-10);// num:990 anArray[1,2,3,990] ref:'someVar closure2'
+```
+
+# Python闭包
+
+上一节里javascript的闭包例子，等价的python例子如下：
+
+``` python 
+#例1
+def say667():
+    # Local variable that ends up within closure
+    num = 666;
+    sayAlert = lambda : num
+    num+=1
+    return sayAlert;
+ 
+sayAlert = say667()
+print sayAlert()
+
+```
+
+``` python 
+#例2
+def setupSomeGlobals():
+    # Local variable that ends up within closure
+    num = 666;
+    # Store some references to functions as global variables
+    gAlertNumber = lambda : num 
+    gIncreaseNumber = lambda : num += 1
+    gSetNumber = lambda x: num = x
+    
+setupSomeGlobals(); # 为三个全局变量赋值
+gAlertNumber(); #666
+gIncreaseNumber();
+gAlertNumber(); # 667
+gSetNumber(12);
+gAlertNumber();#12
+
+#  File "closure.py", line 20
+#    gIncreaseNumber = lambda : num += 1
+#                                    ^
+#SyntaxError: invalid syntax
+```
+
+上面这个是我改成python预想的样子，但其实会报错。因为lambda要求是一个表达式(`expression`)，不能是`statement`。之前的例子1，我试图直接在`lambda`内`print`也是会报错。只能是简单的expression，所以官网才叫[Lambda Expressions](https://docs.python.org/2/tutorial/controlflow.html#lambda-expressions)。
+
+
+``` python 
+#例4
+def sayAlice():
+    sayAlert = lambda : alice 
+    # Local variable that ends up within closure
+    alice = 'Hello Alice'
+    return sayAlert
+
+helloAlice=sayAlice()
+print helloAlice()
+
+```
+
+Python版本的例3就是开头的那个代码，不重复了。例5我觉得比较显然，也不重复了。
