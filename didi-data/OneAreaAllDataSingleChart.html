@@ -46,10 +46,8 @@ function addAreaOptionInSelect(){
 	}
 }
 var canvasFormat = '<canvas id="canvas{0}" width="1000" height="250"></canvas>';
-function addCanvas(){
-	for(var i=0;i<21;i++){
-		$('#container').append(canvasFormat.f(i));
-	}
+function addSingleCanvas(){
+	$('#container').append(canvasFormat.f(0));
 }
 function makeLabel(){
 	var labels = []
@@ -59,18 +57,18 @@ function makeLabel(){
     return labels;
 }
 jdata = [];
-$('#areaopt').change(function(){
-	$('h1').text("区域"+$("#areaopt").val());
-	destroyAllChart();
-	drawAll();
-});
-function destroyAllChart(){
-	for(var k=0;k<sds.length;k++){
-		var ctx = document.getElementById("canvas{0}".f(k));
-		$('#canvas{0}'.f(k)).replaceWith(canvasFormat.f(k));
-		//ctx.clear();
-	}
-}
+// $('#areaopt').change(function(){
+// 	$('h1').text("区域"+$("#areaopt").val());
+// 	destroyAllChart();
+// 	drawAll();
+// });
+// function destroyAllChart(){
+// 	for(var k=0;k<sds.length;k++){
+// 		var ctx = document.getElementById("canvas{0}".f(k));
+// 		$('#canvas{0}'.f(k)).replaceWith(canvasFormat.f(k));
+// 		//ctx.clear();
+// 	}
+// }
 function drawAll(){
    	var labels = makeLabel();
 	var areanum = $("#areaopt").val();
@@ -89,8 +87,8 @@ function drawAll(){
 		            label: sd,
 		            fill: false,
 		            lineTension: 0.1,
-		            backgroundColor: "rgba(75,192,192,0.4)",
-		            borderColor: "rgba(75,192,192,1)",
+		            backgroundColor: "rgba(75,192,192,0.4)",//The fill color under the line.
+		            borderColor: "rgba(75,192,192,1)", 	// The color of the line.
 		            borderCapStyle: 'butt',
 		            borderDash: [],
 		            borderDashOffset: 0.0,
