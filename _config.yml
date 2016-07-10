@@ -3,7 +3,7 @@ title: Algoland
 SEOTitle: Irix的博客 | Irix's Blog
 header-img: img/home-bg.jpg
 email: irixruin@gmail.com
-description: "关于技术与编程、黑客与极客"
+description: "关于技术与编程、与极客"
 keyword: "irix, allanruin, 算法, 技术"
 url: "http://notes.irix.me"              # your host, for absolute URL
 baseurl: ""                             # for example, '/blog' if your blog hosted on 'host/blog'
@@ -15,7 +15,7 @@ RSS: false
 weibo_username:     Allan已经毕业了
 #zhihu_username:     figofuture
 github_username:    allanruin
-twitter_username:   allanruin
+#twitter_username:   allanruin
 #facebook_username:  figofuture
 
 
